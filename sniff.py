@@ -7,6 +7,12 @@
 
 import socket, sys, datetime, os
 from struct import *
+
+import pygame, time, json
+pygame.init()
+with open("voices.json") as json_file:
+    voices = json.load(json_file)
+
  
 #Convert a string of 6 characters of ethernet address into a dash separated hex string
 def eth_addr (a) :
@@ -27,8 +33,11 @@ def addIp(ip, ips):
     if ip.startswith('192.168') and len(filter(lambda obj: obj['ip'] == ip, ips)) == 0:
 	ips.append({'ip': ip, 'date': datetime.datetime.now()})
 	ips.sort()
-        os.system('\a')
-        print('***************************************************')
+        playForIp(ip)
+
+def playForIp(ip):
+    pygame.mixer.music.load(voices[int(''.join(ip.split('.'))) % len(voices)])
+    pygame.mixer.music.play()
 
 # keep IPs for a short time
 MAX_AGE_MS = 60 * 60 * 1000
